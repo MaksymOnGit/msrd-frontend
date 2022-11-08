@@ -1,0 +1,105 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6">
+      <p-toast></p-toast>
+      <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="right">
+          <div class="my-2">
+            <button pButton pRipple label="Invite" icon="pi pi-user-plus" class="p-button-success mr-2" (click)="inviteNewUserDialog()"></button>
+          </div>
+        </ng-template>
+      </p-toolbar>
+
+      <p-table #dt [value]="users" [lazy]="true" (onLazyLoad)="loadUsers($event)" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['name','country.name','representative.name','status']" [rows]="10" [totalRecords]="totalRecords" [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple" [rowHover]="true" dataKey="id">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <h5 class="m-0">Manage Users</h5>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="isAdmin"><p-sortIcon field="isAdmin"></p-sortIcon></th>
+            <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+            <th pSortableColumn="emailConfirmed">Email Confirmed <p-sortIcon field="emailConfirmed"></p-sortIcon></th>
+            <th pSortableColumn="lockoutEnd">SuspendedUntil <p-sortIcon field="lockoutEnd"></p-sortIcon></th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td style="width:1%; min-width:3rem;">
+              <i class="pi" [ngClass]="{'pi-prime' : user.isAdmin, 'pi-user' : !user.isAdmin}" style="font-size: 1.5rem"></i>
+            </td>
+            <td style="width:25%; min-width:10rem;">
+              <span class="p-column-title">Id</span>
+              {{user.id}}
+            </td>
+            <td style="width:30%; min-width:10rem;">
+              <span class="p-column-title">Email</span>
+              {{user.email}}
+            </td>
+            <td style="width:15%; min-width:8rem;" class="pl-7">
+              <span class="p-column-title">Email Confirmed</span>
+              <i class="pi" style="font-size: 1.5rem" [ngClass]="{'pi-check-circle' : user.emailConfirmed, 'pi-times-circle' : !user.emailConfirmed}"></i>
+            </td>
+            <td style="width:15%; min-width: 10rem;"><span class="p-column-title">Suspended Until</span>
+              {{user.lockoutEnd | date: 'yyyy.MM.dd. HH:mm'}}
+            </td>
+            <td>
+              <div class="flex">
+                <button pButton pRipple icon="pi pi-sync" class="p-button-rounded p-button-success mr-2" (click)="reInviteUser(user)"></button>
+                <button *ngIf="!user.lockoutEnd" pButton pRipple icon="pi pi-lock" class="p-button-rounded p-button-warning" (click)="suspendUser(user)"></button>
+                <button *ngIf="user.lockoutEnd" pButton pRipple icon="pi pi-lock-open" class="p-button-rounded p-button-warning" (click)="unsuspendUser(user)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <p-dialog [(visible)]="emailDialog" [style]="{width: '450px'}" header="Invite new user" [modal]="true" class="p-fluid">
+      <ng-template pTemplate="content">
+        <i class="pi pi-user-plus text-center w-full pb-3" style="font-size: 3rem"></i>
+        <div class="field">
+          <label for="email">Email</label>
+          <input
+            [(ngModel)]="email"
+            type="text"
+            pInputText
+            id="email"
+            required
+            autofocus
+            [ngClass]="{'ng-invalid ng-dirty' : emailDialogSubmitted && !email}"
+            pattern="(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|&quot;(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*&quot;)@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"
+            placeholder="Email address">
+          <small class="ng-dirty ng-invalid" *ngIf="emailDialogSubmitted && !email">Email is required.</small>
+        </div>
+      </ng-template>
+
+
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="emailDialog=false"></button>
+        <button pButton pRipple label="Invite" icon="pi pi-check" class="p-button-text" (click)="(emailDialogSubmitted=true) && email && inviteUser()"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="suspendDialog" [style]="{width: '450px'}" header="Suspend user" [modal]="true" class="p-fluid">
+      <ng-template pTemplate="content">
+        <i class="pi pi-lock text-center w-full pb-3" style="font-size: 3rem"></i>
+        <div class="field">
+          <label for="icon">Until</label>
+          <p-calendar [showTime]="true" [required]=true appendTo="body" dateFormat="yy.mm.dd" [(ngModel)]="suspendUntil" [showIcon]="true" id="icon"></p-calendar>
+        </div>
+      </ng-template>
+
+
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="suspendDialog=false"></button>
+        <button pButton pRipple label="Suspend" icon="pi pi-check" class="p-button-text" (click)="(suspendDialogSubmitted=true) && suspendUntil && suspenUserUntil()"></button>
+      </ng-template>
+    </p-dialog>
+  </div>
+</div>
+
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
