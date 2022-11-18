@@ -1,7 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
-import {environment} from "../../environments/environment";
 import {AppConfigService} from "../core/services/app-config.service";
 
 @Injectable()
@@ -61,6 +60,7 @@ export interface Product {
   id?: string;
   code?: string;
   name?: string;
+  quantity?: number;
   created_at?: Date;
   updated_at?: Date;
   description?: string;
