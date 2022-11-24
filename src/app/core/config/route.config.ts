@@ -8,7 +8,8 @@ export const routes: Routes = [
   { path: '', component: AppLayoutComponent,
     children: [
       { path: 'products', loadChildren: () => import('../../products/products.module').then(m => m.ProductsModule)},
-      { path: 'users', loadChildren: () => import('../../users/users.module').then(m => m.UsersModule), canActivate: [RoleGuard]}
+      { path: 'users', loadChildren: () => import('../../users/users.module').then(m => m.UsersModule), canActivate: [RoleGuard]},
+      { path: 'documents', loadChildren: () => import('../../documents/documents.module').then(m => m.DocumentsModule)}
     ],
     canActivate: [AuthGuard]
   },

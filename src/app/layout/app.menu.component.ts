@@ -30,6 +30,11 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-fw pi-table',
                         routerLink: ['/products']
                     },
+                  {
+                    label: 'Documents',
+                    icon: 'pi pi-fw pi-list',
+                    routerLink: ['/documents']
+                  }
                 ]
             }
         ];

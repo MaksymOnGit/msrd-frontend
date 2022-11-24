@@ -16,7 +16,7 @@
   <ng-template pTemplate="body" let-stockRecord>
     <tr>
       <td style="width:25%; min-width:10rem;"><span class="p-column-title">Quantity</span>
-        <i class="pi" [ngClass]="{'pi-arrow-up' : stockRecord.quantity_change_direction > 0, 'pi-arrow-down' : stockRecord.quantity_change_direction < 0}" style="font-size: 0.8rem"></i>
+        <i class="pi" [ngStyle]="{'color': stockRecord.quantity_change_direction > 0 ? 'yellowgreen' : 'red'}" [ngClass]="{'pi-arrow-up' : stockRecord.quantity_change_direction > 0, 'pi-arrow-down' : stockRecord.quantity_change_direction < 0}" style="font-size: 0.8rem"></i>
         {{stockRecord.quantity_change}}
       </td>
       <td style="width:25%; min-width:10rem;">

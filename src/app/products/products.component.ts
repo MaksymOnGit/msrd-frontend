@@ -27,8 +27,6 @@ export class ProductsComponent implements OnInit {
 
   statuses: any[] = [];
 
-  rowsPerPageOptions = [5, 10, 20];
-
   totalRecords: number = 0;
   lastEvent: LazyLoadEvent = {};
 

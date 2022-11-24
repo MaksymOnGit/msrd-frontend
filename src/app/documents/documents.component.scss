@@ -1,0 +1,38 @@
+.document-status-badge {
+  border-radius: var(--border-radius);
+  padding: .25em .5rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .3px;
+
+&.status-accepted {
+   background: #C8E6C9;
+   color: #256029;
+ }
+
+&.status-rejected {
+   background: #FFCDD2;
+   color: #C63737;
+ }
+
+&.status-processing {
+   background: #FEEDAF;
+   color: #8A5340;
+ }
+
+&.status-unknown_items {
+   background: #B3E5FC;
+   color: #23547B;
+ }
+
+&.status-insufficient_stock {
+   background: #ECCFFF;
+   color: #694382;
+ }
+
+&.status-duplicate_items {
+   background: #FFD8B2;
+   color: #805B36;
+ }
+}
