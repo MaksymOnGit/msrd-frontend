@@ -1,0 +1,40 @@
+<p-table [value]="stockRecords" [lazy]="true" (onLazyLoad)="loadStockRecords($event)" responsiveLayout="scroll" [globalFilterFields]="['name','country.name','representative.name','status']" [rows]="10" [totalRecords]="totalRecords" [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowHover]="true" dataKey="id">
+  <ng-template pTemplate="caption">
+    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+      <h5 class="m-0">Manage Products</h5>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="quantity_change">Quantity <p-sortIcon field="quantity_change"></p-sortIcon></th>
+      <th pSortableColumn="quantity_before">Quantity Before <p-sortIcon field="quantity_before"></p-sortIcon></th>
+      <th pSortableColumn="quantity_actual">Quantity Now <p-sortIcon field="quantity_actual"></p-sortIcon></th>
+      <th pSortableColumn="change_datetime">Date Of Change <p-sortIcon field="change_datetime"></p-sortIcon></th>
+      <th>Action</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-stockRecord>
+    <tr>
+      <td style="width:25%; min-width:10rem;"><span class="p-column-title">Quantity</span>
+        <i class="pi" [ngClass]="{'pi-arrow-up' : stockRecord.quantity_change_direction > 0, 'pi-arrow-down' : stockRecord.quantity_change_direction < 0}" style="font-size: 0.8rem"></i>
+        {{stockRecord.quantity_change}}
+      </td>
+      <td style="width:25%; min-width:10rem;">
+        <span class="p-column-title">Quantity Before</span>
+        {{stockRecord.quantity_before}}
+      </td>
+      <td style="width:25%; min-width:10rem;">
+        <span class="p-column-title">Quantity Now</span>
+        {{stockRecord.quantity_actual}}
+      </td>
+      <td style="width:25%; min-width: 10rem;"><span class="p-column-title">Date Of Change</span>
+        {{stockRecord.change_datetime | date: 'yyyy.MM.dd. HH:mm'}}
+      </td>
+      <td>
+        <div class="flex">
+          <button pButton pRipple icon="pi pi-file" class="p-button-rounded p-button-success mr-2"></button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

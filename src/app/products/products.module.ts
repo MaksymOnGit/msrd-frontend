@@ -16,6 +16,9 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import {ProductService} from "../services/product.service";
+import { ProductStocksHistoryComponent } from './product-stocks-history/product-stocks-history.component';
+import {DialogService} from "primeng/dynamicdialog";
+import {StockService} from "../services/stock.service";
 
 @NgModule({
     imports: [
@@ -35,7 +38,7 @@ import {ProductService} from "../services/product.service";
         InputNumberModule,
         DialogModule
     ],
-    declarations: [ProductsComponent],
-  providers: [ProductService]
+    declarations: [ProductsComponent, ProductStocksHistoryComponent],
+  providers: [ProductService, DialogService, StockService]
 })
 export class ProductsModule { }

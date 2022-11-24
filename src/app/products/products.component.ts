@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {LazyLoadEvent, MessageService} from 'primeng/api';
 import {Product, ProductService} from "../services/product.service";
+import {DialogService} from "primeng/dynamicdialog";
+import {ProductStocksHistoryComponent} from "./product-stocks-history/product-stocks-history.component";
 
 @Component({
   selector: 'app-users',
@@ -30,7 +32,7 @@ export class ProductsComponent implements OnInit {
   totalRecords: number = 0;
   lastEvent: LazyLoadEvent = {};
 
-  constructor(private productService: ProductService, private messageService: MessageService) {
+  constructor(private productService: ProductService, private messageService: MessageService, private dialogService: DialogService) {
   }
 
   ngOnInit() {
@@ -193,5 +195,15 @@ export class ProductsComponent implements OnInit {
       }
       this.product = {};
     }
+  }
+
+  showStocksHistory(product: Product) {
+    let ref = this.dialogService.open(ProductStocksHistoryComponent, {
+      header: `${product.name}'s stock history`,
+      width: '70%',
+      contentStyle: {"overflow": "auto"},
+      baseZIndex: 10000,
+      data: product.id
+    });
   }
 }
