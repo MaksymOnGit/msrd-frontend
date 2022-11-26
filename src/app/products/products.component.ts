@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {LazyLoadEvent, MessageService} from 'primeng/api';
-import {Product, ProductService} from "../services/product.service";
+import {Product, ProductQueryRequest, ProductService} from "../services/product.service";
 import {DialogService} from "primeng/dynamicdialog";
 import {ProductStocksHistoryComponent} from "./product-stocks-history/product-stocks-history.component";
+import {MsrdmeiliService} from "../services/msrdmeili.service";
 
 @Component({
   selector: 'app-users',
@@ -30,7 +31,7 @@ export class ProductsComponent implements OnInit {
   totalRecords: number = 0;
   lastEvent: LazyLoadEvent = {};
 
-  constructor(private productService: ProductService, private messageService: MessageService, private dialogService: DialogService) {
+  constructor(private productService: ProductService, private messageService: MessageService, private dialogService: DialogService, private msrdMeiliService: MsrdmeiliService) {
   }
 
   ngOnInit() {
@@ -47,15 +48,32 @@ export class ProductsComponent implements OnInit {
 
   loadProducts(event: LazyLoadEvent) {
     this.lastEvent = event;
-    this.productService.queryProducts({
+    const query: ProductQueryRequest = {
       offset: event.first ?? 0,
       rows: event.rows ?? 10,
       sortField: event.sortField,
       sortOrder: event.sortOrder
-    }).subscribe(response => {
-      this.products = response.result;
-      this.totalRecords = response.totalRecordsCount;
-      event.forceUpdate?.();
+    };
+    if (event.globalFilter) {
+      this.msrdMeiliService.searchProduct(event.globalFilter, query).subscribe(response => {
+        this.products = response.result;
+        this.totalRecords = response.totalRecordsCount;
+        event.forceUpdate?.();
+      });
+    }
+    else
+    {
+      this.productService.queryProducts(query).subscribe(response => {
+        this.products = response.result;
+        this.totalRecords = response.totalRecordsCount;
+        event.forceUpdate?.();
+      });
+    }
+  }
+
+  search(text: string) {
+    this.msrdMeiliService.searchProduct(text, {rows: 10, offset: 0}).subscribe(x => {
+      console.log(x);
     });
   }
 
@@ -149,7 +167,7 @@ export class ProductsComponent implements OnInit {
     if (this.product.name?.trim()) {
       if (this.product.id) {
         this.productService.updateProduct(this.product).subscribe({
-          next: (updProd => {
+          next: (_ => {
             // @ts-ignore
             this.forceUpdateTable();
             this.messageService.add({
@@ -171,7 +189,7 @@ export class ProductsComponent implements OnInit {
         });
       } else {
         this.productService.createProduct(this.product).subscribe({
-          next: (newProd => {
+          next: (_ => {
             this.forceUpdateTable();
             this.messageService.add({
               severity: 'success',
@@ -196,7 +214,7 @@ export class ProductsComponent implements OnInit {
   }
 
   showStocksHistory(product: Product) {
-    let ref = this.dialogService.open(ProductStocksHistoryComponent, {
+    this.dialogService.open(ProductStocksHistoryComponent, {
       header: `${product.name}'s stock history`,
       width: '70%',
       contentStyle: {"overflow": "auto"},

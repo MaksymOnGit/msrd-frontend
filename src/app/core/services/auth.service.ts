@@ -3,7 +3,7 @@ import {OAuthErrorEvent, OAuthService} from "angular-oauth2-oidc";
 import {HttpClient} from "@angular/common/http";
 import {BehaviorSubject, combineLatest, filter, map, Observable} from "rxjs";
 import {environment} from "../../../environments/environment";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {AppConfigService} from "./app-config.service";
 import {passwordFlowConfig} from "../config/auth.config";
 
@@ -46,11 +46,11 @@ export class AuthService {
     if(!config.appSettings.withoutProxy)
       this.urlBase = this.urlBase + '/identity';
     this.oAuthService.configure({...passwordFlowConfig, requireHttps: false/*environment.production*/, issuer: config.appSettings.jwtIssuer})
-    this.oAuthService.loadDiscoveryDocument().then(value => this.isDoneLoadingSubject.next(true));
+    this.oAuthService.loadDiscoveryDocument().then(_ => this.isDoneLoadingSubject.next(true));
 
     this.oAuthService.events.subscribe(x => {
       if(x.type == "token_expires"){
-        this.oAuthService.refreshToken().then(null, reason => this.isAuthenticatedSubject.next(false));
+        this.oAuthService.refreshToken().then(null, _ => this.isAuthenticatedSubject.next(false));
       }
     });
 
@@ -77,10 +77,10 @@ export class AuthService {
 
     this.oAuthService.events
       .pipe(filter(e => ['token_received'].includes(e.type)))
-      .subscribe(e => this.roles = this.parseRolesFromAccessToken());
+      .subscribe(_ => this.roles = this.parseRolesFromAccessToken());
 
     this.oAuthService.events
-      .subscribe(e => this.isAuthenticatedSubject.next(this.oAuthService.hasValidAccessToken()));
+      .subscribe(_ => this.isAuthenticatedSubject.next(this.oAuthService.hasValidAccessToken()));
 
     this.roles = this.parseRolesFromAccessToken()
     this.isAuthenticatedSubject.next(this.oAuthService.hasValidAccessToken());
@@ -127,6 +127,10 @@ export class AuthService {
     }
 
     return [].concat(body.role);
+  }
+
+  public getAccessToken(): string {
+    return this.oAuthService.getAccessToken();
   }
 
   private b64DecodeUnicode(str: string) {

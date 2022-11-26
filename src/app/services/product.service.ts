@@ -48,12 +48,12 @@ export interface ProductQueryRequest {
 
 export interface ProductQueryResponse {
   result: Product[]
-  page: number
-  totalPagesCount: number
+  //page: number
+  //totalPagesCount: number
   totalRecordsCount: number
-  recordsPerPageCount: number
-  isNext: boolean
-  isPrev: boolean
+  //recordsPerPageCount: number
+  //isNext: boolean
+  //isPrev: boolean
 }
 
 export interface Product {
