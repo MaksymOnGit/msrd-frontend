@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {DocumentService, Document} from "../services/document.service";
+import {DocumentService, Document, DocumentQueryRequest} from "../services/document.service";
 import {LazyLoadEvent} from "primeng/api";
+import {MsrdmeiliService} from "../services/msrdmeili.service";
 
 interface expandedRows {
   [key: string]: boolean;
@@ -20,12 +21,12 @@ export class DocumentsComponent implements OnInit {
   totalRecords: number = 0;
   lastEvent: LazyLoadEvent = {};
 
-  all: boolean = true;
+  own: boolean = false;
 
   expandedRows: expandedRows = {};
   isExpanded: boolean = false;
 
-  constructor(private documentServic: DocumentService) { }
+  constructor(private documentServic: DocumentService, private msrdMeiliService: MsrdmeiliService) { }
 
   ngOnInit(): void {
     this.statuses = [
@@ -38,22 +39,33 @@ export class DocumentsComponent implements OnInit {
     ];
   }
 
-  private forceUpdateTable(){
+  public forceUpdateTable(){
     this.loadDocuments(this.lastEvent);
   }
 
   loadDocuments(event: LazyLoadEvent) {
     this.lastEvent = event;
-    this.documentServic.queryDocuments(this.all,{
+    const query: DocumentQueryRequest = {
       offset: event.first ?? 0,
       rows: event.rows ?? 10,
       sortField: event.sortField,
       sortOrder: event.sortOrder
-    }).subscribe(response => {
-      this.documents = response.result;
-      this.totalRecords = response.totalRecordsCount;
-      event.forceUpdate?.();
-    });
+    };
+    if (event.globalFilter) {
+      this.msrdMeiliService.searchDocument(!this.own, event.globalFilter, query).subscribe(response => {
+        this.documents = response.result;
+        this.totalRecords = response.totalRecordsCount;
+        event.forceUpdate?.();
+      });
+    }
+    else
+    {
+      this.documentServic.queryDocuments(!this.own,query).subscribe(response => {
+        this.documents = response.result;
+        this.totalRecords = response.totalRecordsCount;
+        event.forceUpdate?.();
+      });
+    }
   }
 
   expandAll() {

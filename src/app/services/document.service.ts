@@ -20,8 +20,8 @@ export class DocumentService {
     return this.httpClient.get<Document>(`${this.urlBase}/${id}`)
   }
 
-  queryDocuments(all: boolean, query: DocumentQueryRequest): Observable<DocumntQueryResponse> {
-    return this.httpClient.post<DocumntQueryResponse>(`${this.urlBase}/query?all=${all}`, query)
+  queryDocuments(all: boolean, query: DocumentQueryRequest): Observable<DocumentQueryResponse> {
+    return this.httpClient.post<DocumentQueryResponse>(`${this.urlBase}/query?all=${all}`, query)
   }
 
   createProduct(newDocument: Document): Observable<Document> {
@@ -36,14 +36,14 @@ export interface DocumentQueryRequest {
   sortOrder?: number
 }
 
-export interface DocumntQueryResponse {
+export interface DocumentQueryResponse {
   result: Document[]
-  page: number
-  totalPagesCount: number
+  //page: number
+  //totalPagesCount: number
   totalRecordsCount: number
-  recordsPerPageCount: number
-  isNext: boolean
-  isPrev: boolean
+  //recordsPerPageCount: number
+  //isNext: boolean
+  //isPrev: boolean
 }
 
 export interface Document {

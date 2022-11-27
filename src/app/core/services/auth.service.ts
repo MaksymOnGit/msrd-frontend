@@ -29,6 +29,7 @@ export class AuthService {
   public isDoneLoading = this.isDoneLoadingSubject.asObservable();
 
   public roles: string[] = [];
+  public sub: string = "";
 
   constructor(private oAuthService: OAuthService, private httpClient: HttpClient, private router: Router, private config: AppConfigService)
   {
@@ -77,12 +78,12 @@ export class AuthService {
 
     this.oAuthService.events
       .pipe(filter(e => ['token_received'].includes(e.type)))
-      .subscribe(_ => this.roles = this.parseRolesFromAccessToken());
+      .subscribe(_ => this.parseAccessToken());
 
     this.oAuthService.events
       .subscribe(_ => this.isAuthenticatedSubject.next(this.oAuthService.hasValidAccessToken()));
 
-    this.roles = this.parseRolesFromAccessToken()
+    this.parseAccessToken()
     this.isAuthenticatedSubject.next(this.oAuthService.hasValidAccessToken());
 
     //this.isAuthenticated.subscribe(x => {if(!x) this.navigateToLoginPage();});
@@ -109,24 +110,32 @@ export class AuthService {
     this.router.navigate(['/auth/login'], { queryParams: { returnUrl: this.router.url }})
   }
 
-  private parseRolesFromAccessToken(): string[] {
+  private parseAccessToken(): void {
+    this.roles = [];
+    this.sub = "";
     const accessToken = this.oAuthService.getAccessToken();
     if(!accessToken)
-      return [];
+      return;
 
     const accessTokenParts: string[] = accessToken.split('.');
     if(accessTokenParts.length != 3)
-      return [];
+      return;
 
     const body = JSON.parse(this.b64DecodeUnicode(accessTokenParts[1]));
     if(!body)
-      return [];
+      return;
 
     if(!body.role) {
-      return [];
+      return;
     }
 
-    return [].concat(body.role);
+    this.roles = [].concat(body.role);
+
+    if(!body.sub) {
+      return;
+    }
+
+    this.sub = body.sub;
   }
 
   public getAccessToken(): string {

@@ -71,12 +71,6 @@ export class ProductsComponent implements OnInit {
     }
   }
 
-  search(text: string) {
-    this.msrdMeiliService.searchProduct(text, {rows: 10, offset: 0}).subscribe(x => {
-      console.log(x);
-    });
-  }
-
   openNew() {
     this.product = {};
     this.submitted = false;

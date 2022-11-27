@@ -2,35 +2,43 @@
 
   <div class="col-12">
     <div class="card">
-      <h5>Row Expand</h5>
-<!--      <p-toast></p-toast>-->
-      <p-table [value]="documents" (onLazyLoad)="loadDocuments($event)" [lazy]="true" dataKey="id" [expandedRowKeys]="expandedRows" responsiveLayout="scroll" [paginator]="true" [rows]="10" [totalRecords]="totalRecords" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+      <p-table #dt [value]="documents" (onLazyLoad)="loadDocuments($event)" [lazy]="true" dataKey="id" [expandedRowKeys]="expandedRows" responsiveLayout="scroll" [paginator]="true" [rows]="10" [totalRecords]="totalRecords" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
         <ng-template pTemplate="caption">
-          <button pButton icon="pi pi-fw {{isExpanded ? 'pi-minus' : 'pi-plus'}}" label="{{isExpanded ? 'Collapse All' : 'Expand All'}}" (click)="expandAll()"></button>
-          <div class="flex table-header">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <div class="flex flex-column gap-3">
+              <h5 class="m-0">Manage Documents</h5>
+              <div class="field-checkbox">
+                <p-checkbox [(ngModel)]="own" (click)="forceUpdateTable()" [binary]="true" inputId="binary"></p-checkbox>
+                <label for="binary">Display only own documents</label>
+              </div>
+            </div>
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input #searchField pInputText type="text" placeholder="Global Search" (input)="dt.filterGlobal(searchField.value, 'contains')" />
+            </span>
           </div>
         </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th style="width: 3rem"></th>
+            <th style="width: 3rem"><button class="p-button-sm p-button-text p-button-rounded p-button-plain" pButton icon="pi pi-fw {{isExpanded ? 'pi-minus' : 'pi-plus'}}" (click)="expandAll()"></button></th>
             <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th>
             <th pSortableColumn="partnerName">Partner <p-sortIcon field="partnerName"></p-sortIcon></th>
             <th pSortableColumn="price">Price <p-sortIcon field="price"></p-sortIcon></th>
             <th pSortableColumn="validateStockAvailability">Blind <p-sortIcon field="validateStockAvailability"></p-sortIcon></th>
-            <th pSortableColumn="inventoryStatus">Status <p-sortIcon field="inventoryStatus"></p-sortIcon></th>
+            <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-document let-expanded="expanded">
           <tr>
-            <td>
-              <button type="button" pButton pRipple [pRowToggler]="document" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+            <td style="width:3%;">
+              <button type="button" pButton pRipple [pRowToggler]="document" class="p-button-sm p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
             </td>
-            <td style="min-width: 12rem;">{{document.id}}</td>
-            <td style="min-width: 12rem;">{{document.partnerName}}</td>
-            <td style="min-width: 8rem;"><i class="pi" [ngStyle]="{'color': document.direction > 0 ? 'yellowgreen' : 'red'}" [ngClass]="{'pi-arrow-up' : document.direction > 0, 'pi-arrow-down' : document.direction < 0}" style="font-size: 0.8rem"></i>
+            <td style="width:14%; min-width:10rem;">{{document.id}}</td>
+            <td style="width:40%; min-width: 12rem;">{{document.partnerName}}</td>
+            <td style="width:10%; min-width: 8rem;"><i class="pi" [ngStyle]="{'color': document.direction > 0 ? 'yellowgreen' : 'red'}" [ngClass]="{'pi-arrow-up' : document.direction > 0, 'pi-arrow-down' : document.direction < 0}" style="font-size: 0.8rem"></i>
               {{document.price | currency:'EUR'}}</td>
-            <td style="min-width: 8rem;"><i class="pi" [ngClass]="{'pi-eye-slash' : !document.validateStockAvailability}" style="font-size: 1.5rem"></i></td>
-            <td><span [class]="'document-status-badge status-' + document.status.toLowerCase()">{{document.status}}</span></td>
+            <td style="width:10%; min-width: 8rem;"><i class="pi" [ngClass]="{'pi-eye-slash' : !document.validateStockAvailability}" style="font-size: 1.5rem"></i></td>
+            <td style="width:13%; min-width: 8rem;"><span [class]="'document-status-badge status-' + document.status.toLowerCase()">{{document.status}}</span></td>
           </tr>
         </ng-template>
         <ng-template pTemplate="rowexpansion" let-document>

@@ -4,6 +4,7 @@ import {AppConfigService} from "../core/services/app-config.service";
 import {filter, from, map, Observable, of} from 'rxjs';
 import {AuthService} from "../core/services/auth.service";
 import {Product, ProductQueryRequest, ProductQueryResponse} from "./product.service";
+import {Document, DocumentQueryRequest, DocumentQueryResponse} from "./document.service";
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +43,24 @@ export class MsrdmeiliService {
         sort: params.sortField && params.sortOrder ? [`${params.sortField}:${params.sortOrder < 0 ? 'desc' : 'asc'}`] : []
       }
       )).pipe(map<SearchResponse<Product>, ProductQueryResponse>(x => {
+        return {
+          totalRecordsCount: x.estimatedTotalHits,
+          result: x.hits
+        };
+      }));
+    return of()
+  }
+
+  searchDocument(all: boolean, text: string, params: DocumentQueryRequest): Observable<DocumentQueryResponse> {
+    if(this.documentsIndex)
+      return from(this.documentsIndex.search(text,
+        {
+          offset: params.offset,
+          limit: params.rows,
+          sort: params.sortField && params.sortOrder ? [`${params.sortField}:${params.sortOrder < 0 ? 'desc' : 'asc'}`] : [],
+          filter: all ? [] : [`owner = ${this.authService.sub}`]
+        }
+      )).pipe(map<SearchResponse<Document>, DocumentQueryResponse>(x => {
         return {
           totalRecordsCount: x.estimatedTotalHits,
           result: x.hits
