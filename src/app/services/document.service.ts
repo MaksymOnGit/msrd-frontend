@@ -24,7 +24,7 @@ export class DocumentService {
     return this.httpClient.post<DocumentQueryResponse>(`${this.urlBase}/query?all=${all}`, query)
   }
 
-  createProduct(newDocument: Document): Observable<Document> {
+  createDocument(newDocument: Document): Observable<Document> {
     return this.httpClient.put<Document>(`${this.urlBase}/`, newDocument)
   }
 }
@@ -62,6 +62,6 @@ export interface DocumentItem {
   productId: string;
   productName: string;
   quantitativeUnit?: string;
-  price: number;
-  quantity: number;
+  price?: number;
+  quantity?: number;
 }

@@ -1,59 +1,130 @@
-<p-table [value]="documentItems" dataKey="id" editMode="row" [tableStyle]="{'min-width': '50rem'}">
-  <ng-template pTemplate="header">
-    <tr>
-      <th style="width:20%">Code</th>
-      <th style="width:20%">Name</th>
-      <th style="width:20%">Quantity</th>
-      <th style="width:20%">Price</th>
-      <th style="width:20%"></th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
-    <tr [pEditableRow]="product">
-      <td>
-        <p-cellEditor>
-          <ng-template pTemplate="output">
-            {{product.productId}}
-          </ng-template>
-        </p-cellEditor>
-      </td>
-      <td>
-        <p-cellEditor>
-          <ng-template pTemplate="input">
-            <input pInputText type="text" [(ngModel)]="product.name" required>
-          </ng-template>
-          <ng-template pTemplate="output">
-            {{product.name}}
-          </ng-template>
-        </p-cellEditor>
-      </td>
-      <td>
-        <p-cellEditor>
-          <ng-template pTemplate="input">
-            <input pInputText type="text" [(ngModel)]="product.quantity">
-          </ng-template>
-          <ng-template pTemplate="output">
-            {{product.quantity}}
-          </ng-template>
-        </p-cellEditor>
-      </td>
-      <td>
-        <p-cellEditor>
-          <ng-template pTemplate="input">
-            <input pInputText type="text" [(ngModel)]="product.price">
-          </ng-template>
-          <ng-template pTemplate="output">
-            {{product.price | currency: 'EUR'}}
-          </ng-template>
-        </p-cellEditor>
-      </td>
-      <td>
-        <div class="flex align-items-center justify-content-center gap-2">
-          <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(product)" class="p-button-rounded p-button-text"></button>
-          <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(product)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
-          <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(product, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
-        </div>
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+<p-toast></p-toast>
+<div class="card px-3 py-3 flex flex-row gap-5">
+  <div class="p-fluid p-formgrid grid w-full">
+    <div class="field col-12 md:col-6">
+      <label>Partner Name</label>
+      <input [disabled]="readonly" pInputText type="text" [(ngModel)]="partnerName" />
+    </div>
+    <div class="field col-12 md:col-3">
+      <label>Document Type</label>
+      <p-dropdown [disabled]="readonly" [options]="documentTypes" optionLabel="name" optionValue="value" [(ngModel)]="documentType"></p-dropdown>
+    </div>
+    <div class="field col-12 md:col-3">
+      <label>Inventory Control</label>
+      <p-dropdown [disabled]="readonly" [options]="inventoryControlOptions" optionLabel="name" optionValue="value" [(ngModel)]="inventoryControlOption"></p-dropdown>
+    </div>
+  </div>
+</div>
+    <div class="card px-3 py-3">
+
+      <p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '600px'}">
+        <ng-template pTemplate>
+          <p-table #dt [value]="products" [lazy]="true" (onLazyLoad)="loadProducts($event)" selectionMode="single" [(selection)]="selectedProduct" (onRowSelect)="onProductSelect($event.data)" [paginator]="true" [totalRecords]="totalRecords" [rows]="5" responsiveLayout="scroll" [rowHover]="true" dataKey="id">
+            <ng-template pTemplate="caption">
+              <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                <h5 class="m-0">Select a product</h5>
+                <span class="p-input-icon-left">
+                                  <i class="pi pi-search"></i>
+                                  <input #searchField pInputText type="text" placeholder="Global Search" (input)="dt.filterGlobal(searchField.value, 'contains')" />
+                              </span>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="id">Code <p-sortIcon field="id"></p-sortIcon></th>
+                <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                <th pSortableColumn="quantity">Quantity <p-sortIcon field="quantity"></p-sortIcon></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-product>
+              <tr [pSelectableRow]="rowData">
+                <td style="width:14%; min-width:10rem;"><span class="p-column-title">Code</span>
+                  {{product.code || product.id}}
+                </td>
+                <td style="width:40%; min-width:10rem;">
+                  <span class="p-column-title">Name</span>
+                  {{product.name}}
+                </td>
+                <td style="width:10%; min-width:10rem;">
+                  <span class="p-column-title">Quantity</span>
+                  {{product.quantity}}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-template>
+      </p-overlayPanel>
+
+      <p-table #it [value]="documentItems" responsiveLayout="scroll" dataKey="productId" editMode="row" [tableStyleClass]="'w-full'" [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <span class="p-input-icon-left">
+             <p-button *ngIf="!readonly" [disabled]="addingProduct" (onClick)="op.toggle($event)">Add Item</p-button>
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width:20%">Code</th>
+            <th style="width:20%">Name</th>
+            <th style="width:20%">Quantity</th>
+            <th style="width:20%">Price</th>
+            <th style="width:20%"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
+          <tr [pEditableRow]="product">
+            <td style="width:14%">
+              {{product.productId}}
+            </td>
+            <td style="width:14%">
+              {{product.productName}}
+            </td>
+            <td style="width:14%">
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <p-inputNumber [(ngModel)]="product.quantity" [showButtons]="true" buttonLayout="horizontal" inputId="horizontal" spinnerMode="horizontal" [step]="1"
+                                 decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" mode="decimal">
+                  </p-inputNumber>
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{product.quantity}}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+            <td style="width:14%">
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <p-inputNumber [(ngModel)]="product.price" [showButtons]="true" buttonLayout="horizontal" inputId="horizontal" spinnerMode="horizontal" [step]="1"
+                                 decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" mode="currency" currency="EUR">
+                  </p-inputNumber>
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{product.price | currency: 'EUR'}}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+            <td style="width:14%">
+              <div class="flex align-items-center justify-content-center gap-2">
+                <button [disabled]="addingProduct" *ngIf="!readonly && !editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(product)" class="p-button-rounded p-button-text"></button>
+                <button [disabled]="addingProduct" *ngIf="!readonly && !editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-trash" (click)="deleteItem(ri)" class="p-button-rounded p-button-text"></button>
+                <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" [disabled]="!validateItem(product)" (click)="onRowEditSave(product)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(product, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr>
+            <td></td>
+            <td></td>
+            <td style="text-align: end;">Total</td>
+            <td>{{ totalPrice | currency:'EUR' }}</td>
+            <td></td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div *ngIf="!readonly" class="card px-3 py-3 text-right">
+      <p-button [disabled]="addingProduct" (onClick)="saveDocument()">Save Document</p-button>
+    </div>

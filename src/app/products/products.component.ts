@@ -20,7 +20,7 @@ export class ProductsComponent implements OnInit {
 
   products: Product[] = [];
 
-  product: Product = {};
+  product: Partial<Product> = {};
 
   selectedProducts: Product[] = [];
 
@@ -126,7 +126,7 @@ export class ProductsComponent implements OnInit {
     if (!this.product)
       return;
 
-    let tempProduct: Product = {...this.product};
+    let tempProduct: Partial<Product> = {...this.product};
 
     this.product = {};
 
@@ -160,7 +160,7 @@ export class ProductsComponent implements OnInit {
 
     if (this.product.name?.trim()) {
       if (this.product.id) {
-        this.productService.updateProduct(this.product).subscribe({
+        this.productService.updateProduct(this.product as Product).subscribe({
           next: (_ => {
             // @ts-ignore
             this.forceUpdateTable();
@@ -182,7 +182,7 @@ export class ProductsComponent implements OnInit {
           })
         });
       } else {
-        this.productService.createProduct(this.product).subscribe({
+        this.productService.createProduct(this.product as Product).subscribe({
           next: (_ => {
             this.forceUpdateTable();
             this.messageService.add({

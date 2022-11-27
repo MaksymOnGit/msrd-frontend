@@ -59,7 +59,7 @@ export interface ProductQueryResponse {
 export interface Product {
   id?: string;
   code?: string;
-  name?: string;
+  name: string;
   quantity?: number;
   created_at?: Date;
   updated_at?: Date;

@@ -4,7 +4,8 @@ import {DocumentsComponent} from "./documents.component";
 
 @NgModule({
   imports: [RouterModule.forChild([
-    { path: '', component: DocumentsComponent }
+    { path: '', component: DocumentsComponent },
+    { path: ':id', component: DocumentsComponent }
   ])],
   exports: [RouterModule]
 })

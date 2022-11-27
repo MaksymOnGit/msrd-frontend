@@ -36,7 +36,7 @@ export class MsrdmeiliService {
 
   searchProduct(text: string, params: ProductQueryRequest): Observable<ProductQueryResponse> {
     if(this.productsIndex)
-      return from(this.productsIndex.search(text,
+      return from(this.productsIndex.search<Product>(text,
         {
         offset: params.offset,
         limit: params.rows,

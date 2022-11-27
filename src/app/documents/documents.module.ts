@@ -10,6 +10,12 @@ import {InputTextModule} from "primeng/inputtext";
 import {CheckboxModule} from "primeng/checkbox";
 import {FormsModule} from "@angular/forms";
 import {DialogService} from "primeng/dynamicdialog";
+import {MultiSelectModule} from "primeng/multiselect";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {InputNumberModule} from "primeng/inputnumber";
+import { CommonModule as MsrdCommon } from '../common/common.module';
+import {DropdownModule} from "primeng/dropdown";
+import {ToastModule} from "primeng/toast";
 
 
 @NgModule({
@@ -24,7 +30,13 @@ import {DialogService} from "primeng/dynamicdialog";
     TableModule,
     InputTextModule,
     CheckboxModule,
-    FormsModule
+    FormsModule,
+    MultiSelectModule,
+    OverlayPanelModule,
+    InputNumberModule,
+    MsrdCommon,
+    DropdownModule,
+    ToastModule
   ],
   providers: [DialogService]
 })

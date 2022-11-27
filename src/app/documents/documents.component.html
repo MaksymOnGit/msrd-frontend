@@ -1,3 +1,5 @@
+
+<p-toast></p-toast>
 <div class="grid">
 
   <div class="col-12">
@@ -12,7 +14,7 @@
                 <label for="binary">Display only own documents</label>
               </div>
             </div>
-            <button pButton (click)="newDocumentDialog()">New</button>
+            <button pButton (click)="newDocumentDialog()">Create New Document</button>
             <span class="p-input-icon-left">
               <i class="pi pi-search"></i>
               <input #searchField pInputText type="text" placeholder="Global Search" (input)="dt.filterGlobal(searchField.value, 'contains')" />
@@ -26,6 +28,7 @@
             <th pSortableColumn="partnerName">Partner <p-sortIcon field="partnerName"></p-sortIcon></th>
             <th pSortableColumn="price">Price <p-sortIcon field="price"></p-sortIcon></th>
             <th pSortableColumn="validateStockAvailability">Blind <p-sortIcon field="validateStockAvailability"></p-sortIcon></th>
+            <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
             <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
           </tr>
         </ng-template>
@@ -35,10 +38,13 @@
               <button type="button" pButton pRipple [pRowToggler]="document" class="p-button-sm p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
             </td>
             <td style="width:14%; min-width:10rem;">{{document.id}}</td>
-            <td style="width:40%; min-width: 12rem;">{{document.partnerName}}</td>
+            <td style="width:30%; min-width: 12rem;">{{document.partnerName}}</td>
             <td style="width:10%; min-width: 8rem;"><i class="pi" [ngStyle]="{'color': document.direction > 0 ? 'yellowgreen' : 'red'}" [ngClass]="{'pi-arrow-up' : document.direction > 0, 'pi-arrow-down' : document.direction < 0}" style="font-size: 0.8rem"></i>
               {{document.price | currency:'EUR'}}</td>
             <td style="width:10%; min-width: 8rem;"><i class="pi" [ngClass]="{'pi-eye-slash' : !document.validateStockAvailability}" style="font-size: 1.5rem"></i></td>
+            <td style="width:10%; min-width: 10rem;"><span class="p-column-title">Created</span>
+              {{document.date | date: 'yyyy.MM.dd. HH:mm'}}
+            </td>
             <td style="width:13%; min-width: 8rem;"><span [class]="'document-status-badge status-' + document.status.toLowerCase()">{{document.status}}</span></td>
           </tr>
         </ng-template>

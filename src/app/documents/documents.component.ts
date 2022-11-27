@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {DocumentService, Document, DocumentQueryRequest} from "../services/document.service";
-import {LazyLoadEvent} from "primeng/api";
+import {LazyLoadEvent, MessageService} from "primeng/api";
 import {MsrdmeiliService} from "../services/msrdmeili.service";
 import {DocumentComponent} from "./document/document.component";
 import {DialogService} from "primeng/dynamicdialog";
+import {ActivatedRoute, Router} from "@angular/router";
 
 interface expandedRows {
   [key: string]: boolean;
@@ -12,7 +13,8 @@ interface expandedRows {
 @Component({
   selector: 'app-documents',
   templateUrl: './documents.component.html',
-  styleUrls: ['./documents.component.scss']
+  styleUrls: ['./documents.component.scss'],
+  providers: [MessageService]
 })
 export class DocumentsComponent implements OnInit {
 
@@ -28,7 +30,13 @@ export class DocumentsComponent implements OnInit {
   expandedRows: expandedRows = {};
   isExpanded: boolean = false;
 
-  constructor(private documentServic: DocumentService, private msrdMeiliService: MsrdmeiliService, private dialogService: DialogService) { }
+  constructor(
+    private documentServic: DocumentService,
+    private msrdMeiliService: MsrdmeiliService,
+    private messageService: MessageService,
+    private dialogService: DialogService,
+    private route: ActivatedRoute,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.statuses = [
@@ -39,6 +47,11 @@ export class DocumentsComponent implements OnInit {
       {label: 'DUPLICATE ITEMS', value: 'duplicate_items' },
       {label: 'REJECTED', value: 'rejected' }
     ];
+
+    const documentId = this.route.snapshot.paramMap.get('id');
+    if (documentId) {
+      this.openDocumentDialog(documentId);
+    }
   }
 
   public forceUpdateTable(){
@@ -86,6 +99,25 @@ export class DocumentsComponent implements OnInit {
       width: '70%',
       contentStyle: {"overflow": "auto"},
       baseZIndex: 10000
+    }).onClose.subscribe(response => {
+      if(response)
+      {
+        this.messageService.add({severity: 'success', summary: 'Successful', detail: 'Document successfully created.', life: 3000});
+        this.forceUpdateTable();
+      }
     });
   }
+
+  openDocumentDialog(docId: string) {
+    this.dialogService.open(DocumentComponent, {
+      header: `Document: ${docId}`,
+      width: '70%',
+      contentStyle: {"overflow": "auto"},
+      baseZIndex: 10000,
+      data: docId
+    }).onClose.subscribe(cfg => {
+      this.router.navigate(['..'], { relativeTo: this.route});
+    });
+  }
+
 }

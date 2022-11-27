@@ -7,7 +7,6 @@ import {routes} from "./config/route.config";
 
 
 @NgModule({
-  declarations: [],
   imports: [
     RouterModule.forRoot(routes),
     CommonModule,
@@ -22,7 +21,7 @@ import {routes} from "./config/route.config";
   providers: [
     { provide: OAuthStorage, useFactory: () => localStorage },
   ],
-  exports: [RouterModule]
+    exports: [RouterModule]
 })
 export class CoreModule { }
 
