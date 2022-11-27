@@ -12,6 +12,7 @@
                 <label for="binary">Display only own documents</label>
               </div>
             </div>
+            <button pButton (click)="newDocumentDialog()">New</button>
             <span class="p-input-icon-left">
               <i class="pi pi-search"></i>
               <input #searchField pInputText type="text" placeholder="Global Search" (input)="dt.filterGlobal(searchField.value, 'contains')" />
@@ -56,11 +57,11 @@
                   </ng-template>
                   <ng-template pTemplate="body" let-item>
                     <tr>
-                      <td>{{item.productId}}</td>
-                      <td>{{item.productName}}</td>
-                      <td style="min-width: 8rem;"><i class="pi" [ngStyle]="{'color': document.direction > 0 ? 'yellowgreen' : 'red'}" [ngClass]="{'pi-arrow-up' : document.direction > 0, 'pi-arrow-down' : document.direction < 0}" style="font-size: 0.8rem"></i>
+                      <td style="width:10%;">{{item.productId}}</td>
+                      <td style="width:30%;">{{item.productName}}</td>
+                      <td style="width:10%;min-width: 8rem;"><i class="pi" [ngStyle]="{'color': document.direction > 0 ? 'yellowgreen' : 'red'}" [ngClass]="{'pi-arrow-up' : document.direction > 0, 'pi-arrow-down' : document.direction < 0}" style="font-size: 0.8rem"></i>
                         {{item.quantity}}</td>
-                      <td style="min-width: 8rem;">{{item.price | currency:'EUR'}}</td>
+                      <td style="width:14%;min-width: 8rem;">{{item.price | currency:'EUR'}}</td>
                     </tr>
                   </ng-template>
                   <ng-template pTemplate="emptymessage">

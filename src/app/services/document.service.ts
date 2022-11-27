@@ -59,9 +59,9 @@ export interface Document {
 }
 
 export interface DocumentItem {
-  productId?: string;
-  productName?: string;
+  productId: string;
+  productName: string;
   quantitativeUnit?: string;
-  price?: number;
-  quantity?: number;
+  price: number;
+  quantity: number;
 }

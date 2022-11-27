@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {DocumentService, Document, DocumentQueryRequest} from "../services/document.service";
 import {LazyLoadEvent} from "primeng/api";
 import {MsrdmeiliService} from "../services/msrdmeili.service";
+import {DocumentComponent} from "./document/document.component";
+import {DialogService} from "primeng/dynamicdialog";
 
 interface expandedRows {
   [key: string]: boolean;
@@ -26,7 +28,7 @@ export class DocumentsComponent implements OnInit {
   expandedRows: expandedRows = {};
   isExpanded: boolean = false;
 
-  constructor(private documentServic: DocumentService, private msrdMeiliService: MsrdmeiliService) { }
+  constructor(private documentServic: DocumentService, private msrdMeiliService: MsrdmeiliService, private dialogService: DialogService) { }
 
   ngOnInit(): void {
     this.statuses = [
@@ -78,4 +80,12 @@ export class DocumentsComponent implements OnInit {
     this.isExpanded = !this.isExpanded;
   }
 
+  newDocumentDialog() {
+    this.dialogService.open(DocumentComponent, {
+      header: `New document`,
+      width: '70%',
+      contentStyle: {"overflow": "auto"},
+      baseZIndex: 10000
+    });
+  }
 }

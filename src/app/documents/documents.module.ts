@@ -9,6 +9,7 @@ import { DocumentComponent } from './document/document.component';
 import {InputTextModule} from "primeng/inputtext";
 import {CheckboxModule} from "primeng/checkbox";
 import {FormsModule} from "@angular/forms";
+import {DialogService} from "primeng/dynamicdialog";
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import {FormsModule} from "@angular/forms";
     InputTextModule,
     CheckboxModule,
     FormsModule
-  ]
+  ],
+  providers: [DialogService]
 })
 export class DocumentsModule { }
