@@ -49,11 +49,11 @@ export class AuthService {
     this.oAuthService.configure({...passwordFlowConfig, requireHttps: false/*environment.production*/, issuer: config.appSettings.jwtIssuer})
     this.oAuthService.loadDiscoveryDocument().then(_ => this.isDoneLoadingSubject.next(true));
 
-    this.oAuthService.events.subscribe(x => {
-      if(x.type == "token_expires"){
-        this.oAuthService.refreshToken().then(null, _ => this.isAuthenticatedSubject.next(false));
-      }
-    });
+    // this.oAuthService.events.subscribe(x => {
+    //   if(x.type == "token_expires"){
+    //     this.oAuthService.refreshToken().then(null, _ => this.isAuthenticatedSubject.next(false));
+    //   }
+    // });
 
     window.addEventListener('storage', (event) => {
       if (event.key !== 'access_token' && event.key !== null) {
