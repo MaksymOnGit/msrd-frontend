@@ -40,7 +40,8 @@ export class MsrdmeiliService {
         {
         offset: params.offset,
         limit: params.rows,
-        sort: params.sortField && params.sortOrder ? [`${params.sortField}:${params.sortOrder < 0 ? 'desc' : 'asc'}`] : []
+        sort: params.sortField && params.sortOrder ? [`${params.sortField}:${params.sortOrder < 0 ? 'desc' : 'asc'}`] : [],
+        filter: ['deleted != true']
       }
       )).pipe(map<SearchResponse<Product>, ProductQueryResponse>(x => {
         return {
@@ -58,7 +59,7 @@ export class MsrdmeiliService {
           offset: params.offset,
           limit: params.rows,
           sort: params.sortField && params.sortOrder ? [`${params.sortField}:${params.sortOrder < 0 ? 'desc' : 'asc'}`] : [],
-          filter: all ? [] : [`owner = ${this.authService.sub}`]
+          filter: all ? [] : [`owner = ${this.authService.sub} AND deleted != true`]
         }
       )).pipe(map<SearchResponse<Document>, DocumentQueryResponse>(x => {
         return {
